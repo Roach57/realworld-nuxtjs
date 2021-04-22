@@ -1,0 +1,27 @@
+{
+  "name": "realworld-nuxtjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "start": "nuxt start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Roach57/realworld-nuxtjs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Roach57/realworld-nuxtjs/issues"
+  },
+  "homepage": "https://github.com/Roach57/realworld-nuxtjs#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "nuxt": "^2.15.4"
+  }
+}
