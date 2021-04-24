@@ -41,6 +41,8 @@
 
 export default {
   name: 'SettingsIndex',
+  // 在路由匹配组件渲染之前会先进行中间件处理
+  middleware: 'authenticated',
   components: {},
   props: {},
   data() {

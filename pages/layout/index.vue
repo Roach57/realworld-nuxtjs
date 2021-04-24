@@ -15,23 +15,39 @@
               Home
             </nuxt-link>
           </li>
-          <li class="nav-item">
-            <nuxt-link
-              class="nav-link"
-              to="/editor"
-            >
-              <i class="ion-compose"></i>&nbsp;New Post
-            </nuxt-link>
-          </li>
-          <li class="nav-item">
+          <template v-if="user">
+            <li class="nav-item">
+              <nuxt-link
+                class="nav-link"
+                to="/editor"
+              >
+                <i class="ion-compose"></i>&nbsp;New Post
+              </nuxt-link>
+            </li>
+            <li class="nav-item">
 
-            <nuxt-link
-              class="nav-link"
-              to="/settings"
-            >
-              <i class="ion-gear-a"></i>&nbsp;Settings
-            </nuxt-link>
-          </li>
+              <nuxt-link
+                class="nav-link"
+                to="/settings"
+              >
+                <i class="ion-gear-a"></i>&nbsp;Settings
+              </nuxt-link>
+            </li>
+            <li class="nav-item">
+              <nuxt-link
+                class="nav-link"
+                to="/profile/999"
+              >
+                <img
+                  class="user-pic"
+                  :src="user.image"
+                >
+                {{ user.username }}
+              </nuxt-link>
+            </li>
+          </template>
+
+          <template v-else>
           <li class="nav-item">
             <nuxt-link
               class="nav-link"
@@ -48,15 +64,7 @@
               Sign up
             </nuxt-link>
           </li>
-          <li class="nav-item">
-            <nuxt-link
-              class="nav-link"
-              to="/profile/999"
-            >
-              <img class="user-pic" src="https://himg.bdimg.com/sys/portraitn/item/b82835393431393931347610" alt="">
-              lpz999
-            </nuxt-link>
-          </li>
+          </template>
         </ul>
       </div>
     </nav>
@@ -81,6 +89,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 
 export default {
   name: 'LayoutIndex',
@@ -93,7 +103,9 @@ export default {
   };
   },
   //监听属性 类似于 data 概念
-  computed: {},
+  computed: {
+    ...mapState(['user'])
+  },
   //监控data中的数据变化
   watch: {},
   //生命周期 - 创建完成（可以访问当前 this 实例）
