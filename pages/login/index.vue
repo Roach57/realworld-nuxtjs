@@ -13,7 +13,16 @@
           </p>
 
           <ul class="error-messages">
-            <li>That email is already taken</li>
+            <template
+              v-for="(messages, field) in errors"
+            >
+              <li
+                v-for="(message, index) in messages"
+                :key="index"
+              >
+                {{ field }} {{ message }}
+              </li>
+            </template>
           </ul>
           <!-- prevent 阻止默认行为 -->
           <form @submit.prevent="onSubmit">
@@ -51,7 +60,8 @@ export default {
       user: {
         email:'',
         password:'',
-      }
+      },
+      errors: {}, //错误信息
     };
   },
   //监听属性 类似于 data 概念
@@ -73,15 +83,20 @@ export default {
   //方法集合
   methods: {
     async onSubmit() {
-      // 提交表单请求登录
-      const { data } = await login({
-          user: this.user
-      })
-      console.log(data)
-      // TODO 保存用户的登录状态
+      try {
+        // 提交表单请求登录
+        const { data } = await login({
+            user: this.user
+        })
+        console.log(data)
+        // TODO 保存用户的登录状态
 
-      // 跳转到首页
-      this.$router.push("/")
+        // 跳转到首页
+        this.$router.push("/")
+      } catch (err) {
+        // console.dir(err)
+        this.errors = err.response.data.errors
+      }
     }
   },
   //beforeCreate() {}, //生命周期 - 创建之前
