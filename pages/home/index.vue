@@ -78,7 +78,37 @@
               <span>Read more...</span>
             </nuxt-link>
           </div>
+          <!-- 分页列表 -->
+          <nav>
+            <ul class="pagination">
 
+              <!-- ngRepeat: pageNumber in $ctrl.pageRange($ctrl.totalPages) -->
+              <li
+                class="page-item"
+                :class="{
+                  active: item === page
+                }"
+                v-for="item in totalPage"
+                :key="item"
+              >
+                <nuxt-link
+                  class="page-link"
+                  :to="{
+                    name: 'home',
+                    query: {
+                      page: item,
+                      tag: $route.query.tag
+                    }
+                  }"
+                  :href="'/?page=' + item"
+                >
+                  {{ item }}
+                </nuxt-link>
+              </li>
+              <!-- end ngRepeat: pageNumber in $ctrl.pageRange($ctrl.totalPages) -->
+            </ul>
+          </nav>
+          <!-- /分页列表 -->
         </div>
 
         <div class="col-md-3">
@@ -86,14 +116,19 @@
             <p>Popular Tags</p>
 
             <div class="tag-list">
-              <a href="" class="tag-pill tag-default">programming</a>
-              <a href="" class="tag-pill tag-default">javascript</a>
-              <a href="" class="tag-pill tag-default">emberjs</a>
-              <a href="" class="tag-pill tag-default">angularjs</a>
-              <a href="" class="tag-pill tag-default">react</a>
-              <a href="" class="tag-pill tag-default">mean</a>
-              <a href="" class="tag-pill tag-default">node</a>
-              <a href="" class="tag-pill tag-default">rails</a>
+              <nuxt-link
+                :to="{
+                  name: 'home',
+                  query: {
+                    tag: item
+                  }
+                }"
+                class="tag-pill tag-default"
+                v-for="item in tags"
+                :key="item"
+              >
+                {{ item }}
+              </nuxt-link>
             </div>
           </div>
         </div>
@@ -106,6 +141,7 @@
 
 <script>
 import { getArticles } from '@/api/article'
+import { getTags } from '@/api/tag'
 
 export default {
   name: 'HomeIndex',
@@ -117,16 +153,38 @@ export default {
 
     };
   },
-  async asyncData(){
-    const { data } = await getArticles()
+  async asyncData({ query }){
+    const page = Number.parseInt(query.page || 1)
+    const limit = 20
+    // console.log(tagData)
     // console.log(data)
+    const [ articleRes, tagRes ] = await Promise.all([
+      getArticles({
+        limit,
+        offset: (page - 1) * limit,
+        tag: query.tag
+      }),
+      getTags()
+    ])
+
+    const { articles, articlesCount } = articleRes.data
+    const { tags } = tagRes.data
     return {
-      articles: data.articles,
-      articlesCount: data.articlesCount
+      articles,
+      articlesCount,
+      tags,
+      limit,
+      page
     }
   },
+  watchQuery: ['page', 'tag'],
   //监听属性 类似于 data 概念
-  computed: {},
+  computed: {
+    // 获取总页码
+    totalPage() {
+      return Math.ceil(this.articlesCount / this.limit)
+    }
+  },
   //监控data中的数据变化
   watch: {},
   //生命周期 - 创建完成（可以访问当前 this 实例）
