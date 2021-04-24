@@ -98,7 +98,8 @@ export default {
             user: this.user
           })
 
-        console.log(data)
+        // 存储的用户信息
+        // console.log(data)
         // TODO: 保存用户的登录状态
         this.$store.commit('setUser', data.user)
         Cookie.set('user', data.user)
