@@ -39,7 +39,7 @@
 
 <script>
 
-import request from '@/utils/request'
+import { login } from '@/api/user'
 
 export default {
   name: 'LoginIndex',
@@ -74,12 +74,8 @@ export default {
   methods: {
     async onSubmit() {
       // 提交表单请求登录
-      const { data } = await request({
-        method: 'POST',
-        url: '/api/users/login',
-        data: {
+      const { data } = await login({
           user: this.user
-        }
       })
       console.log(data)
       // TODO 保存用户的登录状态
