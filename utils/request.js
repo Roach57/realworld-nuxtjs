@@ -2,7 +2,7 @@
 
 import axios from 'axios'
 
-const reqeust = axios.create({
+const request = axios.create({
   baseURL: 'https://conduit.productionready.io'
 })
 
