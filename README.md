@@ -6,6 +6,9 @@ npm i axios
 npm i cookieparser
 npm i js-cookie
 npm i dayjs
+
+npm i markdown-it
+
 ```
 
 ## 参考链接
