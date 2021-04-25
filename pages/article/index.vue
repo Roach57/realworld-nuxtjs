@@ -115,6 +115,17 @@ export default {
   mounted() {
 
   },
+  head (){
+    return {
+      title: `${this.article.title} - RealWorld`,
+      meta: [
+        {
+          hid: 'description', name: 'description',
+          content: this.article.description
+        }
+      ]
+    }
+  },
   //方法集合
   methods: {
 
