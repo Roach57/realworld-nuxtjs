@@ -153,7 +153,6 @@
                       page: item,
                     }
                   }"
-                  :href="'/?page=' + item"
                 >
                   {{ item }}
                 </nuxt-link>
@@ -194,7 +193,7 @@
 </template>
 
 <script>
-import { getArticles } from '@/api/article'
+import { getFeedArticles, getArticles } from '@/api/article'
 import { getTags } from '@/api/tag'
 import { mapState } from 'vuex'
 
@@ -208,17 +207,21 @@ export default {
 
     };
   },
-  async asyncData({ query }){
+  async asyncData({ query, store }){
     const page = Number.parseInt(query.page || 1)
     const limit = 20
     const { tag } = query
+    const tab = query.tab || 'global_feed'
+    const loadArticles = store.state.user && tab === 'your_feed'
+        ? getFeedArticles
+        : getArticles
     // console.log(tagData)
     // console.log(data)
     const [ articleRes, tagRes ] = await Promise.all([
-      getArticles({
+      loadArticles({
         limit,
         offset: (page - 1) * limit,
-        tag: query.tag
+        tag
       }),
       getTags()
     ])
