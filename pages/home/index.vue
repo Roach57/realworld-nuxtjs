@@ -104,13 +104,15 @@
                 >
                   {{ article.author.username }}
                 </nuxt-link>
-                <span class="date">{{ article.createdAt }}</span>
+                <span class="date">{{ article.createdAt | date('MMM DD, YYYY') }}</span>
               </div>
               <button
                 class="btn btn-outline-primary btn-sm pull-xs-right"
                 :class="{
                   active: article.favorited
                 }"
+                @click="onFavorite(article)"
+                :disabled="article.favoriteDisabled"
               >
                 <i class="ion-heart"></i>
                 {{ article.favoritesCount }}
@@ -193,7 +195,13 @@
 </template>
 
 <script>
-import { getFeedArticles, getArticles } from '@/api/article'
+import {
+  getFeedArticles,
+  getArticles,
+  addFavorite,
+  deleteFavorite,
+} from '@/api/article'
+
 import { getTags } from '@/api/tag'
 import { mapState } from 'vuex'
 
@@ -228,14 +236,18 @@ export default {
 
     const { articles, articlesCount } = articleRes.data
     const { tags } = tagRes.data
+
+    // 添加状态, 防止短时间内重复点击, favoriteDisabled 设置未禁用状态
+    articles.forEach(article => article.favoriteDisabled = false)
+
     return {
-      articles,
-      articlesCount,
-      tags,
-      limit,
-      page,
-      tag,
-      tab: query.tab || 'global_feed'
+      articles, // 文章列表
+      articlesCount,  // 文章总数
+      tags, // 标签列表
+      limit, // 每页大小
+      page,  // 页码
+      tag,  // 选项卡
+      tab,  // 数据标签
     }
   },
   watchQuery: ['page', 'tag', 'tab'],
@@ -259,7 +271,24 @@ export default {
   },
   //方法集合
   methods: {
-
+    async onFavorite (article) {
+      // console.log(article)
+      // 禁用点击
+      article.favoriteDisabled = true
+      if (article.favorited) {
+        // 取消点赞
+        await deleteFavorite(article.slug)
+        article.favorited = false
+        article.favoritesCount += -1
+      } else {
+        // 添加点赞
+        await addFavorite(article.slug)
+        article.favorited = true
+        article.favoritesCount += 1
+      }
+      // 取消禁用, 恢复可点击
+      article.favoriteDisabled = false
+    },
   },
   //beforeCreate() {}, //生命周期 - 创建之前
   //beforeMount() {}, //生命周期 - 挂载之前

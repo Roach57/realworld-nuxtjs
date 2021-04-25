@@ -17,3 +17,19 @@ export const getFeedArticles = params => {
     params,
   })
 }
+
+// 获取关注的用户文章列表
+export const addFavorite = slug => {
+  return request({
+    method: 'POST',
+    url: `/api/articles/${slug}/favorite`,
+  })
+}
+
+// 获取关注的用户文章列表
+export const deleteFavorite = slug => {
+  return request({
+    method: 'DELETE',
+    url: `/api/articles/${slug}/favorite`,
+  })
+}

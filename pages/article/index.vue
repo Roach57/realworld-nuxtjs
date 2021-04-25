@@ -80,7 +80,7 @@
               </button>
             </div>
           </form>
-          
+
           <div class="card">
             <div class="card-block">
               <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
