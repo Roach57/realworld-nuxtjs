@@ -7,16 +7,17 @@
         <div class="row">
 
           <div class="col-xs-12 col-md-10 offset-md-1">
-            <img src="http://i.imgur.com/Qr71crq.jpg" class="user-img" />
-            <h4>Eric Simons</h4>
-            <p>
-              Cofounder @GoThinkster, lived in Aol's HQ for a few months, kinda looks like Peeta from the Hunger Games
-            </p>
-            <button class="btn btn-sm btn-outline-secondary action-btn">
-              <i class="ion-plus-round"></i>
-              &nbsp;
-              Follow Eric Simons 
-            </button>
+            <img :src="user.image" class="user-img" />
+            <h4>{{ user.username }}</h4>
+            <nuxt-link
+              ui-sref="app.settings"
+              class="btn btn-sm btn-outline-secondary action-btn"
+              :to="{
+                name: 'settings'
+              }"
+            >
+              <i class="ion-gear-a"></i> Edit Profile Settings
+            </nuxt-link>
           </div>
 
         </div>
@@ -88,6 +89,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 
 export default {
   name: 'UserProfile',
@@ -102,7 +104,9 @@ export default {
   };
   },
   //监听属性 类似于 data 概念
-  computed: {},
+  computed: {
+    ...mapState(['user'])
+  },
   //监控data中的数据变化
   watch: {},
   //生命周期 - 创建完成（可以访问当前 this 实例）

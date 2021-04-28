@@ -4,7 +4,7 @@
 
     <div class="banner">
       <div class="container">
-        <h1 class="logo-font">conduit</h1>
+        <h1 class="logo-font">Roch57</h1>
         <p>A place to share your knowledge.</p>
       </div>
     </div>
@@ -239,7 +239,7 @@ export default {
 
     // 添加状态, 防止短时间内重复点击, favoriteDisabled 设置未禁用状态
     articles.forEach(article => article.favoriteDisabled = false)
-    console.log(articles)
+    // console.log(articles)
 
     return {
       articles, // 文章列表

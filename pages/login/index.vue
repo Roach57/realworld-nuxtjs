@@ -63,8 +63,8 @@ export default {
     return {
       user: {
         username: '',
-        email:'',
-        password:'',
+        email:'roach57@163.com',
+        password:'1234567890',
       },
       errors: {}, //错误信息
     };
