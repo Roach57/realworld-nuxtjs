@@ -48,6 +48,7 @@
 
 <script>
 
+import _ from 'lodash';
 import { login, register } from '@/api/user'
 
 // 仅在客户端加载 js-cookie 包
@@ -101,6 +102,7 @@ export default {
         // 存储的用户信息
         // console.log(data)
         // TODO: 保存用户的登录状态
+        _.unset(data.user, 'password')
         this.$store.commit('setUser', data.user)
         Cookie.set('user', data.user)
 

@@ -15,6 +15,16 @@ export const mutations = {
   },
   delUser (state) {
     state.user = null
+    // state.user = {
+    //   bio: '',
+    //   createdAt: '',
+    //   email: '',
+    //   id: '',
+    //   image: '',
+    //   token: '',
+    //   updateAt: '',
+    //   username: '',
+    // }
   }
 }
 
