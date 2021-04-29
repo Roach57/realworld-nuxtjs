@@ -13,6 +13,9 @@ export const mutations = {
   setUser (state, data) {
     state.user = data
   },
+  getUser (state) {
+    return state.user
+  },
   delUser (state) {
     state.user = null
     // state.user = {

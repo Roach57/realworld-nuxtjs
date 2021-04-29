@@ -9,6 +9,8 @@ export const getArticles = params => {
   })
 }
 
+
+
 // 获取关注的用户文章列表
 export const getFeedArticles = params => {
   return request({
@@ -42,6 +44,28 @@ export const getArticle = slug => {
     url: `/api/articles/${slug}`,
   })
 }
+
+
+// 发布文章
+export const createArticle = data => {
+  return request({
+    method: 'POST',
+    url: `/api/articles`,
+    data
+  })
+}
+
+
+// 更新文章
+export const updateArticle = (slug, data) => {
+  return request({
+    method: 'PUT',
+    url: `/api/articles/${slug}`,
+    data
+  })
+}
+
+
 
 // 获取文章评论
 export const getComments = slug => {
