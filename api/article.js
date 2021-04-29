@@ -10,12 +10,31 @@ export const getArticles = params => {
 }
 
 
-
 // 获取关注的用户文章列表
 export const getFeedArticles = params => {
   return request({
     method: 'GET',
     url: '/api/articles/feed',
+    params,
+  })
+}
+
+
+// 获取 登录者 文章列表
+export const getMyArticles = params => {
+  return request({
+    method: 'GET',
+    url: '/api/articles',
+    params,
+  })
+}
+
+
+// 获取 登录者 最爱文章列表
+export const getFavoritedArticles = params => {
+  return request({
+    method: 'GET',
+    url: '/api/articles',
     params,
   })
 }

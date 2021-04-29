@@ -145,7 +145,7 @@ export default {
           }
         })
 
-      console.log(data.article.slug)
+      // console.log(data.article.slug)
       this.$router.push(`/article/${data.article.slug}`)
     }
   },
