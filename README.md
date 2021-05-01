@@ -1,5 +1,6 @@
 # realworld-nuxtjs
 
+项目地址: https://github.com/Roach57/realworld-nuxtjs
 ## 安装依赖
 
 ``` text
