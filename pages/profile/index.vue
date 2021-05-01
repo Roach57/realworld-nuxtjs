@@ -7,18 +7,28 @@
         <div class="row">
 
           <div class="col-xs-12 col-md-10 offset-md-1">
-            <img :src="user.image" class="user-img" />
-            <h4>{{ user.username }}</h4>
-            <p ng-bind="::$ctrl.profile.bio" class="ng-binding">{{ user.bio }}</p>
+            <img :src="profile.image" class="user-img" />
+            <h4>{{ profile.username }}</h4>
+            <p ng-bind="::$ctrl.profile.bio" class="ng-binding">{{ profile.bio }}</p>
             <nuxt-link
               ui-sref="app.settings"
               class="btn btn-sm btn-outline-secondary action-btn"
+              v-if="isMyprofile"
               :to="{
                 name: 'settings'
               }"
             >
               <i class="ion-gear-a"></i> Edit Profile Settings
             </nuxt-link>
+            <button
+              ui-sref="app.settings"
+              class="btn btn-sm btn-outline-secondary action-btn"
+              :disabled="followDisabled"
+              v-else
+              @click="onFollow()"
+            >
+              <i class="ion-plus-round"></i> {{ showFollowMsg }} {{ profile.username }}
+            </button>
           </div>
 
         </div>
@@ -32,7 +42,7 @@
           <div class="articles-toggle">
             <ul class="nav nav-pills outline-active">
               <li
-                v-if="user"
+                v-if="profile"
                 class="nav-item"
               >
                 <nuxt-link
@@ -41,7 +51,7 @@
                   :to="{
                     name: 'profile',
                     params: {
-                      username: user.username
+                      username: profile.username
                     }
                   }"
                 >
@@ -58,7 +68,7 @@
                   :to="{
                     name: 'profile',
                     params: {
-                      username: user.username
+                      username: profile.username
                     },
                     query: {
                       tab: 'favorited'
@@ -179,6 +189,12 @@
 
 <script>
 import {
+  getUserProfiles,
+  followUser,
+  unFollowUser
+} from '@/api/profiles'
+
+import {
   getMyArticles,
   getFavoritedArticles,
   addFavorite,
@@ -196,25 +212,27 @@ export default {
   data() {
   //这里存放数据
     return {
-
+      followDisabled: false
     };
   },
   watchQuery: ['page', 'tab'],
-  async asyncData({ query, store }){
+  async asyncData({ params, query }){
+    const { data } = await getUserProfiles(params.username)
+    const { profile } = data
+    // console.log(data)
     const page = Number.parseInt(query.page || 1)
     const limit = 5
-    const user = store.state.user
     const tab = Object.keys(query).length === 0 ? 'author': 'favorited'
     const articleRes = tab === 'favorited'
         ? await getFavoritedArticles({
           limit,
           offset: (page - 1) * limit,
-          favorited: user.username,
+          favorited: profile.username,
         })
         : await getMyArticles({
           limit,
           offset: (page - 1) * limit,
-          author: user.username,
+          author: profile.username,
         })
 
     const { articles, articlesCount } = articleRes.data
@@ -223,6 +241,7 @@ export default {
     articles.forEach(article => article.favoriteDisabled = false)
 
     return {
+      profile,
       articles, // 文章列表
       articlesCount,  // 文章总数
       limit, // 每页大小
@@ -235,6 +254,12 @@ export default {
     ...mapState(['user']),
     totalPage() {
       return Math.ceil(this.articlesCount / this.limit)
+    },
+    isMyprofile(){
+      return this.user.username === this.profile.username
+    },
+    showFollowMsg(){
+      return this.profile.following ? "Unfollow":"Follow"
     }
   },
   //监控data中的数据变化
@@ -267,6 +292,14 @@ export default {
       // 取消禁用, 恢复可点击
       article.favoriteDisabled = false
     },
+    async onFollow(){
+      this.followDisabled = true
+      this.profile.following
+      ? await unFollowUser(this.profile.username)
+      : await followUser(this.profile.username)
+      this.profile.following = !this.profile.following
+      this.followDisabled = false
+    }
   },
   //beforeCreate() {}, //生命周期 - 创建之前
   //beforeMount() {}, //生命周期 - 挂载之前

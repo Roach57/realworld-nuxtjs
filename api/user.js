@@ -28,7 +28,6 @@ export const getUser = () => {
 
 // 更新用户信息
 export const updateUser = data => {
-  console.log("api updateUser")
   return request({
     method: 'PUT',
     url: '/api/user',
