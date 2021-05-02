@@ -74,6 +74,14 @@ export const createArticle = data => {
   })
 }
 
+// 删除文章
+export const deleteArticle = slug => {
+  return request({
+    method: 'DELETE',
+    url: `/api/articles/${slug}`,
+  })
+}
+
 
 // 更新文章
 export const updateArticle = (slug, data) => {

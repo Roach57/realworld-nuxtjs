@@ -6,8 +6,14 @@
         <textarea class="form-control" placeholder="Write a comment..." rows="3"></textarea>
       </div>
       <div class="card-footer">
-        <img src="http://i.imgur.com/Qr71crq.jpg" class="comment-author-img" />
-        <button class="btn btn-sm btn-primary">
+        <img
+          class="comment-author-img"
+          :src="user.image"
+        />
+        <button
+          class="btn btn-sm btn-primary"
+          @click="addComment"
+        >
         Post Comment
         </button>
       </div>
@@ -53,6 +59,7 @@
 
 <script>
 import { getComments } from '@/api/article'
+import { mapState } from 'vuex'
 
 export default {
   name: 'ArticleComments',
@@ -70,7 +77,9 @@ export default {
     };
   },
   //监听属性 类似于 data 概念
-  computed: {},
+  computed: {
+    ...mapState(['user']),
+  },
   //监控data中的数据变化
   watch: {},
   //生命周期 - 创建完成（可以访问当前 this 实例）
@@ -85,7 +94,9 @@ export default {
   },
   //方法集合
   methods: {
-
+    addComment(){
+      console.log("addComment")
+    }
   },
   //beforeCreate() {}, //生命周期 - 创建之前
   //beforeMount() {}, //生命周期 - 挂载之前

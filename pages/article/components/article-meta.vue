@@ -25,31 +25,66 @@
       </nuxt-link>
       <span class="date">{{ article.createAt | date('MMM DD, YYYY') }}</span>
     </div>
-    <button
-      class="btn btn-sm btn-outline-secondary"
-      :class="{
-        active: article.author.following
-      }"
+    <span
+      class="ng-scope"
+      v-if="isMyArticle"
     >
-      <i class="ion-plus-round"></i>
-      &nbsp;
-      Follow Eric Simons <span class="counter">(10)</span>
-    </button>
-    &nbsp;&nbsp;
-    <button
-      class="btn btn-sm btn-outline-primary"
-      :class="{
-        active: article.favorited
-      }"
+      <nuxt-link
+        class="btn btn-outline-secondary btn-sm"
+        exact
+        :to="{
+          name: 'editor',
+          params: {
+            slug: article.slug
+          }
+        }"
+      >
+        <i class="ion-edit"></i>
+        &nbsp;
+        Edit Article
+      </nuxt-link>
+      &nbsp;&nbsp;
+      <button
+        class="btn btn-outline-danger btn-sm"
+        @click="delArticle(article.slug)"
+      >
+        <i class="ion-trash-a"></i>
+        &nbsp;
+        Delete Article
+      </button>
+    </span>
+    <span
+      class="ng-scope"
+      v-else
     >
-      <i class="ion-heart"></i>
-      &nbsp;
-      Favorite Post <span class="counter">(29)</span>
-    </button>
+      <button
+        class="btn btn-sm btn-outline-secondary"
+        :class="{
+          active: article.author.following
+        }"
+      >
+        <i class="ion-plus-round"></i>
+        &nbsp;
+        Follow Eric Simons <span class="counter">(10)</span>
+      </button>
+      &nbsp;&nbsp;
+      <button
+        class="btn btn-sm btn-outline-primary"
+        :class="{
+          active: article.favorited
+        }"
+      >
+        <i class="ion-heart"></i>
+        &nbsp;
+        Favorite Post <span class="counter">(29)</span>
+      </button>
+    </span>
   </div>
 </template>
 
 <script>
+import { deleteArticle } from '@/api/article'
+import { mapState } from 'vuex'
 
 export default {
   name: 'ArticleMeta',
@@ -67,7 +102,12 @@ export default {
     };
   },
   //监听属性 类似于 data 概念
-  computed: {},
+  computed: {
+    ...mapState(['user']),
+    isMyArticle(){
+      return this.user.username === this.article.author.username
+    },
+  },
   //监控data中的数据变化
   watch: {},
   //生命周期 - 创建完成（可以访问当前 this 实例）
@@ -80,7 +120,10 @@ export default {
   },
   //方法集合
   methods: {
-
+    async delArticle(slug){
+      await deleteArticle(slug)
+      this.$router.push("/")
+    }
   },
   //beforeCreate() {}, //生命周期 - 创建之前
   //beforeMount() {}, //生命周期 - 挂载之前
