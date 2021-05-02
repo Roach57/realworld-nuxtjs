@@ -1,9 +1,12 @@
 <!--  -->
 <template>
   <div class=''>
-    <form class="card comment-form">
+    <form
+      class="card comment-form"
+      @submit.prevent="appendComment"
+    >
       <div class="card-block">
-        <textarea class="form-control" placeholder="Write a comment..." rows="3"></textarea>
+        <textarea v-model="commentContext" class="form-control" placeholder="Write a comment..." rows="3"></textarea>
       </div>
       <div class="card-footer">
         <img
@@ -12,7 +15,7 @@
         />
         <button
           class="btn btn-sm btn-primary"
-          @click="addComment"
+          :disabled="commentDisabled"
         >
         Post Comment
         </button>
@@ -52,13 +55,23 @@
           {{ comment.author.username }}
         </nuxt-link>
         <span class="date-posted">{{ comment.createAt | date('MMM DD, YYYY') }}</span>
+        <span
+          class="mod-options"
+          v-if="comment.ismycomment"
+        >
+          <i class="ion-trash-a" @click="delComment(comment.id)"></i>
+        </span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { getComments } from '@/api/article'
+import {
+  getComments,
+  addComment,
+  deleteComment,
+} from '@/api/article'
 import { mapState } from 'vuex'
 
 export default {
@@ -73,9 +86,12 @@ export default {
   data() {
   //这里存放数据
     return {
-      comments: [] //文章列表
+      commentContext: '', //当前评论
+      comments: [], //评论列表
+      commentDisabled: false //是否禁用点击
     };
   },
+
   //监听属性 类似于 data 概念
   computed: {
     ...mapState(['user']),
@@ -89,13 +105,32 @@ export default {
   //生命周期 - 挂载完成（可以访问DOM元素）
   async mounted() {
     const { data } = await getComments(this.article.slug)
-    // console.log(data)
+    data.comments.forEach(comment => comment.ismycomment = comment.author.username === this.user.username ? true : false)
     this.comments = data.comments
   },
   //方法集合
   methods: {
-    addComment(){
-      console.log("addComment")
+    async appendComment(){
+      this.commentDisabled = true
+      const { data } = await addComment(this.article.slug, this.commentContext)
+      this.commentContext = ''
+      // console.log(data)
+      this.comments.unshift(data.comment)
+      this.commentDisabled = false
+    },
+    async delComment(id){
+      // console.log("delCommnet", id)
+      await deleteComment(this.article.slug, id)
+      this.comments.every((item,index) => {
+        // console.log(item)
+        if(item.id === id){
+          this.comments.splice(index,1)
+          return false
+        } else {
+          return true
+        }
+      })
+
     }
   },
   //beforeCreate() {}, //生命周期 - 创建之前

@@ -94,10 +94,32 @@ export const updateArticle = (slug, data) => {
 
 
 
-// 获取文章评论
+// 获取文章评论列表
 export const getComments = slug => {
   return request({
     method: 'GET',
     url: `/api/articles/${slug}/comments`,
+  })
+}
+
+// 添加文章评论
+export const addComment = (slug, body) => {
+  const data = {
+    "comment": {
+      "body": body
+    }
+  }
+  return request({
+    method: 'POST',
+    url: `/api/articles/${slug}/comments`,
+    data
+  })
+}
+
+// 删除文章评论
+export const deleteComment = (slug, id) => {
+  return request({
+    method: 'DELETE',
+    url: `/api/articles/${slug}/comments/${id}`,
   })
 }
