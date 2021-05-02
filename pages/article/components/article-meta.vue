@@ -62,10 +62,12 @@
         :class="{
           active: article.author.following
         }"
+        :disabled="article.followDisabled"
+        @click="onFollow()"
       >
         <i class="ion-plus-round"></i>
         &nbsp;
-        Follow Eric Simons <span class="counter">(10)</span>
+        {{ showFollowMsg }} <span class="counter">{{ article.author.username }}</span>
       </button>
       &nbsp;&nbsp;
       <button
@@ -73,10 +75,12 @@
         :class="{
           active: article.favorited
         }"
+        :disabled="article.favoriteDisabled"
+        @click="onFavorited()"
       >
         <i class="ion-heart"></i>
         &nbsp;
-        Favorite Post <span class="counter">(29)</span>
+        {{ showFavoritedMsg }} Article <span class="counter">({{ article.favoritesCount }})</span>
       </button>
     </span>
   </div>
@@ -107,6 +111,12 @@ export default {
     isMyArticle(){
       return this.user.username === this.article.author.username
     },
+    showFollowMsg(){
+      return this.article.author.following ? "Unfollow":"Follow"
+    },
+    showFavoritedMsg(){
+      return this.article.favorited ? "Unfavorite":"Favorite"
+    }
   },
   //监控data中的数据变化
   watch: {},
@@ -123,6 +133,12 @@ export default {
     async delArticle(slug){
       await deleteArticle(slug)
       this.$router.push("/")
+    },
+    async onFollow(){
+      this.$emit('changeFollow')
+    },
+    async onFavorited(){
+      this.$emit('changeFavorited')
     }
   },
   //beforeCreate() {}, //生命周期 - 创建之前

@@ -5,7 +5,7 @@
     <div class="banner">
       <div class="container">
         <h1>{{ article.title }}</h1>
-        <article-meta :article="article" />
+        <article-meta :article="article" v-on:changeFollow="onFollow" v-on:changeFavorited="onFavorited" />
       </div>
     </div>
 
@@ -17,7 +17,7 @@
       <hr />
 
       <div class="article-actions">
-        <article-meta :article="article" />
+        <article-meta :article="article" v-on:changeFollow="onFollow" v-on:changeFavorited="onFavorited" />
       </div>
 
       <div class="row">
@@ -36,10 +36,22 @@
 </template>
 
 <script>
-import { getArticle } from '@/api/article'
+import { 
+  getArticle,
+  addFavorite,
+  deleteFavorite,
+} from '@/api/article'
+
+import {
+
+  followUser,
+  unFollowUser,
+} from '@/api/profiles'
+
 import MarkdownIt from 'markdown-it'
 import ArticleMeta from  './components/article-meta'
 import ArticleComments from  './components/article-components'
+
 
 export default {
   name: 'ArticleIndex',
@@ -59,6 +71,8 @@ export default {
     const { article }  = data
     const md = new MarkdownIt()
     article.body = md.render(article.body)
+    article.followDisabled = false
+    article.favoriteDisabled = false
     return {
       article
     }
@@ -88,7 +102,26 @@ export default {
   },
   //方法集合
   methods: {
-
+    async onFollow(){
+      this.article.followDisabled = true
+      this.article.author.following
+      ? await unFollowUser(this.article.author.username)
+      : await followUser(this.article.author.username)
+      this.article.author.following = !this.article.author.following
+      this.article.followDisabled = false
+    },
+    async onFavorited(){
+      this.article.favoriteDisabled = true
+      if (this.article.favorited){
+        await deleteFavorite(this.article.slug)
+        this.article.favoritesCount += -1
+      } else {
+        await addFavorite(this.article.slug)
+        this.article.favoritesCount += 1
+      }
+      this.article.favorited = !this.article.favorited
+      this.article.favoriteDisabled = false
+    }
   },
   //beforeCreate() {}, //生命周期 - 创建之前
   //beforeMount() {}, //生命周期 - 挂载之前
