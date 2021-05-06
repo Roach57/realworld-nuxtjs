@@ -111,7 +111,6 @@ export default {
   async mounted() {
     const { data } = await getComments(this.article.slug)
     if (this.user){
-      console.log(this.user)
       this.islogin = true
       data.comments.forEach(comment => comment.ismycomment = comment.author.username === this.user.username ? true : false)
       this.comments = data.comments
