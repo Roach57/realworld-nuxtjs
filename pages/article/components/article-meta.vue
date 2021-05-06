@@ -109,7 +109,10 @@ export default {
   computed: {
     ...mapState(['user']),
     isMyArticle(){
+      if (this.user){
       return this.user.username === this.article.author.username
+      }
+      return false
     },
     showFollowMsg(){
       return this.article.author.following ? "Unfollow":"Follow"

@@ -4,6 +4,7 @@
     <form
       class="card comment-form"
       @submit.prevent="appendComment"
+      v-if="islogin"
     >
       <div class="card-block">
         <textarea v-model="commentContext" class="form-control" placeholder="Write a comment..." rows="3"></textarea>
@@ -21,7 +22,10 @@
         </button>
       </div>
     </form>
-
+    <p show-authed="false" style="display: inherit;"  v-else>
+      <nuxt-link to="/login">Sign in</nuxt-link> or
+      <nuxt-link to="/register">Sign up</nuxt-link> to add comments on this article.
+    </p>
     <div
       class="card"
       v-for="comment in comments"
@@ -88,7 +92,8 @@ export default {
     return {
       commentContext: '', //当前评论
       comments: [], //评论列表
-      commentDisabled: false //是否禁用点击
+      commentDisabled: false, //是否禁用点击
+      islogin: false, // 是否登陆
     };
   },
 
@@ -105,8 +110,12 @@ export default {
   //生命周期 - 挂载完成（可以访问DOM元素）
   async mounted() {
     const { data } = await getComments(this.article.slug)
-    data.comments.forEach(comment => comment.ismycomment = comment.author.username === this.user.username ? true : false)
-    this.comments = data.comments
+    if (this.user){
+      console.log(this.user)
+      this.islogin = true
+      data.comments.forEach(comment => comment.ismycomment = comment.author.username === this.user.username ? true : false)
+      this.comments = data.comments
+    }
   },
   //方法集合
   methods: {
@@ -114,6 +123,7 @@ export default {
       this.commentDisabled = true
       const { data } = await addComment(this.article.slug, this.commentContext)
       this.commentContext = ''
+      data.comment.ismycomment = true
       // console.log(data)
       this.comments.unshift(data.comment)
       this.commentDisabled = false
